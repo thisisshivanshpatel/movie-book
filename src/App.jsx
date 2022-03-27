@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import "./App.css";
-import MovieCard from "./MovieCard";
+import { searchMovieWithTitle } from "./Axios/api";
+import MovieCard from "./components/MovieCard";
 import searchIcon from "./search.svg";
 
-const API_URL = "http://www.omdbapi.com?apikey=dc20621f";
+//const API_URL = "http://www.omdbapi.com?apikey=dc20621f";
 
 const App = () => {
   const [movies, setMovies] = useState([]);
   const [searchText, setSearchText] = useState("");
 
   const searchMovies = async (title) => {
-    const response = await fetch(`${API_URL}&s=${title}`);
-    const data = await response.json();
-
-    setMovies(data.Search);
+    const response = await searchMovieWithTitle(title);
+    const data = response.data.results;
+    setMovies(data);
   };
 
   // useEffect(() => {
@@ -28,6 +28,11 @@ const App = () => {
           type="text"
           placeholder="Search for movies"
           value={searchText}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              searchMovies(searchText);
+            }
+          }}
           onChange={(e) => setSearchText(e.target.value)}
         />
         <img
